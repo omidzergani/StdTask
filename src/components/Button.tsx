@@ -63,7 +63,7 @@ const styles = ScaledSheet.create({
     button: {
         margin: '16@s',
         width: '100@s',
-        height: '30@s',
+        height: '35@s',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row'

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
@@ -13,14 +13,18 @@ import { Colors } from '../theme';
 import { scale } from 'react-native-size-matters';
 
 const BACK_BUTTON_SIZE = 25;
-
-export default function Header({ navigation, options, route, back }: NativeStackHeaderProps) {
+export default function Header({ navigation, options, route, back }: NativeStackHeaderProps & { back: { replaceScreenWithProfile?: boolean } }) {
     const title = getHeaderTitle(options, route.name);
 
+    const handleReplaceWithProfile = useCallback(() => {
+        navigation.replace('Profile');
+        navigation.goBack();
+    }, []);
+
     const backButton = useMemo(() => {
-        if (!back?.title) return null;
+        if (!back) return null;
         return (
-            <TouchableOpacity onPress={navigation.goBack} style={styles.backButton}>
+            <TouchableOpacity onPress={back?.replaceScreenWithProfile ? handleReplaceWithProfile : navigation.goBack} style={styles.backButton}>
                 <Icon name='arrow-left-circle' size={BACK_BUTTON_SIZE} />
             </TouchableOpacity>
         );
@@ -63,7 +67,7 @@ const styles = StyleSheet.create({
         backgroundColor: "grey"
     },
     title: {
-        fontSize: scale(22),
+        fontSize: scale(20),
         color: Colors.text,
         textAlignVertical: 'center',
         textAlign: 'center',

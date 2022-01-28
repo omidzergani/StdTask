@@ -12,7 +12,7 @@ interface Props {
 }
 
 function Label(props: Props & TextProps) {
-    return <Text {...props} style={[styles.label, FONTS[props.weight ?? 'thin'], props.style]} />;
+    return <Text {...props} style={[styles.label, FONTS[props.weight ?? 'regular'], props.style]} />;
 }
 
 const styles = StyleSheet.create({
