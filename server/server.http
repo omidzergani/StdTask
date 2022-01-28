@@ -1,0 +1,73 @@
+
+
+
+### get post
+
+
+
+GET http://localhost:3000/posts
+Content-Type: application/json
+
+
+### get post 1
+
+GET http://localhost:3000/posts/1
+Content-Type: application/json
+
+
+
+
+
+
+### post new post
+
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+  "id": 2,
+  "title": "TITLE 1",
+  "description": "Description of the post 1",
+  "userId": 1,
+  "website": ""
+}
+### put new post
+
+PUT  http://localhost:3000/posts/2
+Content-Type: application/json
+
+{
+  "title": "omid zerganu",
+  "description": "Description",
+  "userId": 1,
+  "website": "http://localhost"
+}
+
+
+### delete
+DELETE   http://localhost:3000/posts/2
+
+
+
+
+
+
+
+### get post 1
+
+GET http://localhost:3000/users?email=alizergany@gmail.com
+Content-Type: application/json
+
+
+
+### get post 1
+
+POST  http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "first_name": "omid",
+    "last_name": "zergany",
+    "email": "alizergany@gmail.com",
+    "password": "zyomidzy"
+}

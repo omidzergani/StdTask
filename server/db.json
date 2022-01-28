@@ -1,0 +1,37 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "first_name": "omid",
+      "last_name": "zergany",
+      "email": "omidzergany@gmail.com",
+      "password": "zyomidzy"
+    },
+    {
+      "first_name": "omid",
+      "last_name": "zergany",
+      "email": "alizergany@gmail.com",
+      "password": "zyomidzy",
+      "id": 2
+    },
+    {
+      "data": {
+        "email": "omidzergany@gmail.com",
+        "password": "zyomidzy",
+        "firstName": "Mood",
+        "lastName": "Zergany"
+      },
+      "id": 3
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "TITLE 0",
+      "description": "Description of the post 0",
+      "user_id": 1,
+      "website": "",
+      "category": ""
+    }
+  ]
+}
