@@ -3,6 +3,7 @@ import {combineReducers} from '@reduxjs/toolkit';
 import persistReducer from 'redux-persist/es/persistReducer';
 import userReducer from '../slices/userSlice';
 import uiReducer from '../slices/uiSlice';
+import postReducer from '../slices/postSlice';
 
 const persistConfig = {
   key: 'root',
@@ -15,4 +16,5 @@ const persistedRootReducer = persistReducer(persistConfig, userReducer);
 export default combineReducers({
   user: persistedRootReducer,
   ui: uiReducer,
+  posts: postReducer,
 });
