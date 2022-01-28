@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import Netinfo from '@react-native-community/netinfo';
-import snakeCase from 'lodash/snakeCase';
-import camelCase from 'lodash/camelCase';
+
+import {camelCaseTheObjectKeys, snakeCaseTheObjectKeys} from '../utils';
 
 export const axios = Axios.create({
   baseURL: 'http://localhost:3000',
@@ -15,19 +15,11 @@ axios.interceptors.request.use(async request => {
   }
 
   if (!!request.params) {
-    const newParams = {};
-    Object.keys(request.params).forEach(key => {
-      newParams[snakeCase(key)] = request.params[key];
-    });
-    request.params = newParams;
+    request.params = snakeCaseTheObjectKeys(request.params);
   }
 
   if (!!request.data) {
-    const newData = {};
-    Object.keys(request.data).forEach(key => {
-      newData[snakeCase(key)] = request.data[key];
-    });
-    request.data = newData;
+    request.data = snakeCaseTheObjectKeys(request.data);
   }
 
   return request;
@@ -35,11 +27,11 @@ axios.interceptors.request.use(async request => {
 
 axios.interceptors.response.use(response => {
   if (!!response.data) {
-    const newData = {};
-    Object.keys(response.data).forEach(key => {
-      newData[camelCase(key)] = response.data[key];
-    });
-    response.data = newData;
+    if (Array.isArray(response.data)) {
+      response.data = response.data.map(obj => camelCaseTheObjectKeys(obj));
+    } else {
+      response.data = camelCaseTheObjectKeys(response.data);
+    }
   }
 
   return response;
