@@ -9,11 +9,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 //screens
 import LoginScreen from './Login';
 import SignUpScreen from './SignUp';
-import HomeScreen from './Home';
+import PostScreen from './Post';
 import ChatScreen from './Chat';
 import ProfileScreen from './Profile';
 import AddPost from './Post/AddPost';
 import EditPost from './Post/EditPost';
+import PostDetail from './Post/PostDetail';
 
 //slices
 import { selectIsSignedIn } from '../store/slices/userSlice';
@@ -26,9 +27,9 @@ import { scale, ScaledSheet } from 'react-native-size-matters';
 
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 
-const RootStack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator();
 const ProfileStack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+const RootStack = createNativeStackNavigator();
 
 const Theme = {
     ...DefaultTheme,
@@ -43,7 +44,13 @@ export default function RootScreens() {
     const isSignedIn = useSelector(selectIsSignedIn);
     return (
         <NavigationContainer theme={Theme}>
-            <RootStack.Navigator initialRouteName={isSignedIn ? 'Login' : 'Landing'} screenOptions={defaultOptions}>
+            <RootStack.Navigator
+                initialRouteName={isSignedIn ? 'Login' : 'Landing'}
+                screenOptions={{
+                    ...defaultOptions,
+                    headerTitleStyle: styles.rootTitleStyle
+                }}
+            >
                 {!isSignedIn && <Fragment>
                     <RootStack.Screen name='Login' component={LoginScreen} options={{ title: 'LOGIN' }} />
                     <RootStack.Screen name='SignUp' component={SignUpScreen} options={{ title: 'SIGN UP' }} />
@@ -56,20 +63,22 @@ export default function RootScreens() {
 
 
 function LandingStackScreen() {
+
     return (
         <Tab.Navigator
+            backBehavior='firstRoute'
             screenOptions={{
                 ...defaultOptions,
                 tabBarShowLabel: false,
                 tabBarActiveTintColor: Colors.primary,
                 tabBarInactiveTintColor: Colors.text,
-                tabBarStyle: styles.tabBar
+                tabBarStyle: styles.tabBar,
             }}
         >
             <Tab.Screen
                 name='Home'
-                component={HomeScreen}
-                options={{ tabBarIcon: (props) => <TabBarIcon {...props} name={'home-outline'} /> }}
+                component={PostScreen}
+                options={{ tabBarIcon: (props) => <TabBarIcon {...props} name={'home-outline'} />, headerTitle: 'All Posts' }}
             />
             <Tab.Screen
                 name='Chat'
@@ -91,11 +100,12 @@ function LandingStackScreen() {
 
 function ProfileStackScreen() {
     return (
-        <ProfileStack.Navigator initialRouteName='Profile' screenOptions={defaultOptions}>
-            <ProfileStack.Screen name='Profile' component={ProfileScreen} />
-            <ProfileStack.Screen name='AddPost' component={AddPost} />
-            <ProfileStack.Screen name='EditPost' component={EditPost} />
-        </ProfileStack.Navigator>
+        <RootStack.Navigator initialRouteName='Profile' screenOptions={defaultOptions}>
+            <RootStack.Screen name='Profile' component={ProfileScreen} />
+            <RootStack.Screen name='AddPost' component={AddPost} options={{ header: (props) => <Header {...props} back={{ title: '', replaceScreenWithProfile: true }} /> }} />
+            <RootStack.Screen name='EditPost' component={EditPost} options={{ header: (props) => <Header {...props} back={{ title: '', replaceScreenWithProfile: true }} /> }} />
+            <RootStack.Screen name='PostDetail' component={PostDetail} options={{ header: (props) => <Header {...props} back={{ title: '', replaceScreenWithProfile: true }} /> }} />
+        </RootStack.Navigator>
     )
 }
 
@@ -112,5 +122,8 @@ const styles = ScaledSheet.create({
         height: getBottomSpace() + scale(45),
         paddingBottom: getBottomSpace() + 5,
         paddingTop: '15@s',
+    },
+    rootTitleStyle: {
+        fontSize: scale(22)
     }
 })
