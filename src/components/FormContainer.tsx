@@ -1,25 +1,13 @@
 
-import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React, { ReactNode } from 'react';
-import { SafeAreaView, SafeAreaViewProps } from 'react-native-safe-area-context';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView, KeyboardAwareScrollViewProps } from 'react-native-keyboard-aware-scroll-view'
 
-interface Props {
-    children: ReactNode,
-    screenHasHeader: boolean
-}
-
-const EdgesWithoutTop = ['bottom', 'left', 'right'];
-const Edges = ['bottom', 'left', 'right', 'top'];
-
-
-export default function Container({ children, screenHasHeader = true, ...props }: Props & SafeAreaViewProps) {
+export default function FormContainer({ children, ...props }: KeyboardAwareScrollViewProps) {
     return (
-        <SafeAreaView {...props} style={[styles.container, props.style]} edges={screenHasHeader ? Edges : EdgesWithoutTop as any}>
-            <KeyboardAwareScrollView>
-                {children}
-            </KeyboardAwareScrollView>
-        </SafeAreaView>
+        <KeyboardAwareScrollView {...props} style={[styles.container, props.style]} extraScrollHeight={10} enableOnAndroid>
+            {children}
+        </KeyboardAwareScrollView>
     );
 }
 
