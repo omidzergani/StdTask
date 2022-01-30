@@ -1,10 +1,10 @@
-import React, { useCallback, useMemo } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 //components
-import Icon from 'react-native-vector-icons/Feather';
 import Label from './Label';
+import BackButton from './BackButton';
 
 //utils
 import { getHeaderTitle } from '@react-navigation/elements';
@@ -12,21 +12,13 @@ import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { Colors } from '../theme';
 import { scale } from 'react-native-size-matters';
 
-const BACK_BUTTON_SIZE = 25;
-export default function Header({ navigation, options, route, back }: NativeStackHeaderProps & { back: { replaceScreenWithProfile?: boolean } }) {
+export default function Header({ navigation, options, route, back }: NativeStackHeaderProps) {
     const title = getHeaderTitle(options, route.name);
-
-    const handleReplaceWithProfile = useCallback(() => {
-        navigation.replace('Profile');
-        navigation.goBack();
-    }, []);
 
     const backButton = useMemo(() => {
         if (!back) return null;
         return (
-            <TouchableOpacity onPress={back?.replaceScreenWithProfile ? handleReplaceWithProfile : navigation.goBack} style={styles.backButton}>
-                <Icon name='arrow-left-circle' size={BACK_BUTTON_SIZE} />
-            </TouchableOpacity>
+            <BackButton onBackPress={navigation.goBack} />
         );
     }, []);
 
@@ -34,7 +26,7 @@ export default function Header({ navigation, options, route, back }: NativeStack
     return (
         <View style={[styles.container, options.headerStyle]}>
             <View style={styles.headerSide}>
-                {backButton}
+                {options.headerLeft ?? backButton}
             </View>
             <View style={styles.titleContainer}>
                 <Label weight='thin' style={[styles.title, options.headerTitleStyle]}>
@@ -74,7 +66,6 @@ const styles = StyleSheet.create({
     },
     headerSide: {
         zIndex: 2,
-
     },
     titleContainer: {
         paddingTop: PADDING_TOP,
@@ -86,10 +77,4 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    backButton: {
-        height: HEIGHT,
-        aspectRatio: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
 });
