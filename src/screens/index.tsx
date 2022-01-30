@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 //navigators
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { DefaultNavigatorOptions, DefaultTheme, NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
+import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 //screens
@@ -26,6 +26,7 @@ import { Colors } from '../theme';
 import { scale, ScaledSheet } from 'react-native-size-matters';
 
 import { getBottomSpace } from 'react-native-iphone-x-helper';
+import { Platform } from 'react-native';
 
 const ProfileStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,20 +42,25 @@ const Theme = {
 };
 
 export default function RootScreens() {
+    const ref = useRef<NavigationContainerRef<any>>();
     const isSignedIn = useSelector(selectIsSignedIn);
+    // ref.current.
     return (
-        <NavigationContainer theme={Theme}>
+        <NavigationContainer theme={Theme} ref={ref}>
             <RootStack.Navigator
                 initialRouteName={isSignedIn ? 'Login' : 'Landing'}
                 screenOptions={{
                     ...defaultOptions,
                     headerTitleStyle: styles.rootTitleStyle
                 }}
+                key={'Root'}
             >
-                {!isSignedIn && <Fragment>
-                    <RootStack.Screen name='Login' component={LoginScreen} options={{ title: 'LOGIN' }} />
-                    <RootStack.Screen name='SignUp' component={SignUpScreen} options={{ title: 'SIGN UP' }} />
-                </Fragment>}
+                {!isSignedIn ?
+                    (<RootStack.Group>
+                        <RootStack.Screen name='Login' component={LoginScreen} options={{ title: 'LOGIN' }} />
+                        <RootStack.Screen name='SignUp' component={SignUpScreen} options={{ title: 'SIGN UP' }} />
+                    </RootStack.Group>)
+                    : undefined}
                 {!!isSignedIn && <RootStack.Screen name='Landing' component={LandingStackScreen} options={{ headerShown: false }} />}
             </RootStack.Navigator>
         </NavigationContainer>
@@ -74,6 +80,8 @@ function LandingStackScreen() {
                 tabBarInactiveTintColor: Colors.text,
                 tabBarStyle: styles.tabBar,
             }}
+            key={'Landing'}
+            initialRouteName='Home'
         >
             <Tab.Screen
                 name='Home'
@@ -98,31 +106,39 @@ function LandingStackScreen() {
 }
 
 
-function ProfileStackScreen() {
+function ProfileStackScreen({ }) {
     return (
-        <RootStack.Navigator initialRouteName='Profile' screenOptions={defaultOptions}>
-            <RootStack.Screen name='Profile' component={ProfileScreen} />
-            <RootStack.Screen name='AddPost' component={AddPost} options={{ header: (props) => <Header {...props} back={{ title: '', replaceScreenWithProfile: true }} /> }} />
-            <RootStack.Screen name='EditPost' component={EditPost} options={{ header: (props) => <Header {...props} back={{ title: '', replaceScreenWithProfile: true }} /> }} />
-            <RootStack.Screen name='PostDetail' component={PostDetail} options={{ header: (props) => <Header {...props} back={{ title: '', replaceScreenWithProfile: true }} /> }} />
-        </RootStack.Navigator>
+        <ProfileStack.Navigator key={'Profile'} initialRouteName='Profile' screenOptions={defaultOptions}>
+            <ProfileStack.Screen name='Profile' component={ProfileScreen} />
+            <ProfileStack.Screen name='AddPost' component={AddPost} options={{ title: 'Add Post' }} />
+            <ProfileStack.Screen name='EditPost' component={EditPost} options={{ title: 'Edit Post' }} />
+            <ProfileStack.Screen name='PostDetail' component={PostDetail} options={{ title: 'Post Detail' }} />
+        </ProfileStack.Navigator>
     )
 }
 
 
-const defaultOptions: any = {
+const defaultOptions = {
     header: (props) => <Header {...props} />,
+
 }
 
 
 
 const styles = ScaledSheet.create({
-    tabBar: {
-        borderTopWidth: 0,
-        height: getBottomSpace() + scale(45),
-        paddingBottom: getBottomSpace() + 5,
-        paddingTop: '15@s',
-    },
+    tabBar: Platform.select({
+        ios: {
+            borderTopWidth: 0,
+            height: getBottomSpace() + scale(45),
+            paddingBottom: getBottomSpace() + 5,
+            paddingTop: '15@s',
+        },
+        android: {
+            elevation: 0,
+            borderTopWidth: 0,
+            height: scale(50),
+        }
+    }),
     rootTitleStyle: {
         fontSize: scale(22)
     }

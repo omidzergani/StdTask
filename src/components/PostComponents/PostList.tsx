@@ -6,11 +6,11 @@ import PostItem from './PostItem';
 
 
 //store
-import { deletePostAsyncAction, getPostAsyncAction } from '../../../store/actions/postActions';
-import { checkIsLoading, getUpdatingItemsId } from '../../../store/slices/uiSlice';
-import { selectPostsArray, selectUserPostsArray } from '../../../store/slices/postSlice';
-import { useAppDispatch, useAppSelector } from '../../../hooks';
-import { Post } from '../../../api/posts';
+import { deletePostAsyncAction, getPostAsyncAction } from '../../store/actions/postActions';
+import { checkIsLoading, getUpdatingItemsId } from '../../store/slices/uiSlice';
+import { selectPostsArray, selectUserPostsArray } from '../../store/slices/postSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { Post } from '../../api/posts';
 
 //utils
 import { useNavigation } from '@react-navigation/native';
@@ -18,16 +18,18 @@ import { ScaledSheet } from 'react-native-size-matters';
 
 
 //selectors
-import { selectUser } from '../../../store/slices/userSlice';
+import { selectUser } from '../../store/slices/userSlice';
 
 interface Props {
     getUserPosts?: boolean;
+    screenName?: string;
 }
-export default function PostList({ getUserPosts }: Props) {
+export default function PostList({ getUserPosts, screenName }: Props) {
     const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
 
-    const posts = useAppSelector(getUserPosts ? selectUserPostsArray : selectPostsArray);
+    const posts = useAppSelector(getUserPosts ? selectUserPostsArray : selectPostsArray).sort((a, b) => b.time - a.time);
+
 
     const isLoading = useAppSelector((state) => checkIsLoading(state, getPostAsyncAction.pending.type));
     const deletingItems = useAppSelector((state) => getUpdatingItemsId(state, deletePostAsyncAction.pending.type));
@@ -38,15 +40,15 @@ export default function PostList({ getUserPosts }: Props) {
     }, []);
 
     const handleGetPosts = useCallback(() => {
-        dispatch(getPostAsyncAction({ getUserPosts }))
+        dispatch(getPostAsyncAction(getUserPosts));
     }, [getUserPosts]);
 
 
     const handleDetail = (postId: Post['id']) => {
-        navigation.navigate('MyProfile', { screen: 'PostDetail', params: { postId } });
+        navigation.navigate('MyProfile', { screen: 'PostDetail', initial: false, params: { postId, prevScreenName: screenName } });
     }
     const handleEdit = (postId: Post['id']) => {
-        navigation.navigate('MyProfile', { screen: 'EditPost', params: { postId } });
+        navigation.navigate('MyProfile', { screen: 'EditPost', initial: false, params: { postId, prevScreenName: screenName } });
     }
 
     const handleDelete = (postId: Post['id']) => {
@@ -89,7 +91,7 @@ export default function PostList({ getUserPosts }: Props) {
                 <RefreshControl
                     refreshing={isLoading}
                     onRefresh={handleGetPosts}
-                    size={25}
+                // size={}
                 />
             }
             maxToRenderPerBatch={5}
@@ -102,7 +104,6 @@ export default function PostList({ getUserPosts }: Props) {
 const styles = ScaledSheet.create({
     list: {
         flex: 1,
-
     },
     content: {
         padding: '16@s',

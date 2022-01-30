@@ -1,19 +1,24 @@
 import {axios} from './config';
 import {User} from './user';
 
-export interface Post {
-  id: number;
+export interface PostBody {
   title: string;
   description: string;
   userId: number;
   website?: string;
   category: string;
+  time?: number;
+}
+
+export interface Post extends PostBody {
+  id: number;
 }
 
 export async function getPostsRequest({
   userId,
-}: {userId?: User['id']} | undefined) {
-  const {data} = await axios.get('/posts', {
+  order,
+}: {userId?: User['id']; order?: 'desc' | 'asc'} | undefined) {
+  const {data} = await axios.get(`/posts?_sort=time&_order=desc`, {
     params: {
       userId,
     },
@@ -25,22 +30,16 @@ export async function deletePostRequest({postId}: {postId: Post['id']}) {
   return axios.delete(`/posts/${postId}`);
 }
 
-export async function addPostRequest(post: Post) {
-  const {data} = await axios.post('/posts', {
-    data: post,
-  });
+export async function addPostRequest(post: PostBody) {
+  const {data} = await axios.post('/posts', {...post, time: Date.now()});
   return data;
 }
 
 export async function updatePostRequest(
-  post: Partial<Post> & {postId: Post['id']},
+  post: Partial<Post>,
+  postId: Post['id'],
 ) {
-  const {data} = await axios.put('/posts', {
-    params: {
-      id: post.postId,
-    },
-    data: post,
-  });
+  const {data} = await axios.put(`/posts/${postId}`, post);
   return data;
 }
 

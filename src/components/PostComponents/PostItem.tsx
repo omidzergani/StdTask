@@ -2,18 +2,18 @@ import { View, Image } from 'react-native';
 import React from 'react';
 //components
 
-import Button from '../../../components/Button';
+import Button from '../Button';
 
 //utils
 import { ScaledSheet } from 'react-native-size-matters';
 
 //types
-import { Post } from '../../../api/posts';
-import Label from '../../../components/Label';
+import { Post } from '../../api/posts';
+import Label from '../Label';
 
 
-import { IMAGE_PLACEHOLDER } from '../../../assets/images';
-import { Colors } from '../../../theme';
+import { IMAGE_PLACEHOLDER } from '../../assets/images';
+import { Colors } from '../../theme';
 
 interface Props {
     post: Post,

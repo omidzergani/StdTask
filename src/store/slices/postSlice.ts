@@ -31,6 +31,20 @@ const postSlice = createSlice({
         posts,
       };
     },
+
+    addPost(state, action: PayloadAction<Post>) {
+      return {
+        ...state,
+        posts: {
+          [action.payload.id]: action.payload,
+          ...state.posts,
+        },
+        postsByUser: {
+          [action.payload.id]: action.payload,
+          ...state.postsByUser,
+        },
+      };
+    },
     deletePost(state, action: PayloadAction<{postId: Post['id']}>) {
       delete state.posts[action.payload.postId];
       delete state.postsByUser[action.payload.postId];
@@ -71,5 +85,6 @@ export const selectUserPostsArray = (state: RootStore): Post[] => {
   return Object.values(state.posts.postsByUser);
 };
 
-export const {setPosts, setUserPosts, setPostError} = postSlice.actions;
+export const {setPosts, setUserPosts, setPostError, addPost} =
+  postSlice.actions;
 export default postSlice.reducer;
