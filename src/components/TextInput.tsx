@@ -1,9 +1,7 @@
 import { StyleSheet, TextInput as DefaultTextInput, TextInputProps, View } from 'react-native';
 import React from 'react';
 import { Colors, DIMENSIONS } from '../theme';
-import startCase from 'lodash/startCase';
 import { FONTS, WEIGHTS } from '../constants';
-import { memo } from 'react';
 import { scale, ScaledSheet } from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
