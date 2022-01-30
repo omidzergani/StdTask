@@ -1,6 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useRef } from 'react';
 
 //utils
 import { useFormik } from 'formik';
@@ -10,16 +8,13 @@ import { useAppDispatch, useAppSelector } from '../../hooks';
 
 //components 
 import Container from '../../components/Container';
-import Label from '../../components/Label';
 import HelperText from '../../components/HelperText';
 import Button from '../../components/Button';
 import TextInput, { TextInputRef } from '../../components/TextInput';
-import { useSelector } from 'react-redux';
 import { checkIsLoading } from '../../store/slices/uiSlice';
 import { loginAsyncAction, signUpAsyncAction } from '../../store/actions/userActions';
 import { UserSignUpData } from '../../api/user';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-interface Props { }
+import FormContainer from '../../components/FormContainer';
 
 
 const SignUpSchema = Yup.object().shape({
@@ -36,8 +31,6 @@ type InputsNames = keyof UserSignUpData | 'passwordConfirm';
 export default function SignUpScreen({ navigation }) {
     const inputsRef = useRef({});
     const dispatch = useAppDispatch();
-
-    const [isFocused, setIsFocused] = useState(false);
 
     const { error, loading, message } = useAppSelector((state) => ({
         loading: checkIsLoading(state, loginAsyncAction.pending.type),
@@ -78,7 +71,7 @@ export default function SignUpScreen({ navigation }) {
 
     return (
         <Container screenHasHeader={false} style={styles.container}>
-            <KeyboardAwareScrollView extraHeight={200} contentContainerStyle={styles.content}>
+            <FormContainer extraHeight={200} contentContainerStyle={styles.content}>
 
                 <TextInput
                     placeholder='First Name'
@@ -88,7 +81,6 @@ export default function SignUpScreen({ navigation }) {
                     onChangeText={handleValueChange('firstName')}
                     returnKeyType='next'
                     autoCapitalize={'words'}
-                    autoFocus={isFocused}
                     onSubmitEditing={handleFocus('lastName')}
 
                 />
@@ -155,7 +147,7 @@ export default function SignUpScreen({ navigation }) {
                         Privacy Policy
                     </HelperText>
                 </HelperText>
-            </KeyboardAwareScrollView>
+            </FormContainer>
 
             <Button
                 style={styles.submit}
@@ -177,10 +169,9 @@ const styles = ScaledSheet.create({
         alignItems: 'center',
     },
     content: {
-        flex: 1,
         width: '100%',
         alignItems: 'center',
-        justifyContent: 'center'
+        paddingTop: '50@s',
     },
     input: {
         width: '80%',
