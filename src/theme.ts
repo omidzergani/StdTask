@@ -7,6 +7,7 @@ export const Colors = {
   primary: '#4A77EC',
   links: '#0745AD',
   placeholder: '#777777',
+  modalBackColor: 'rgba(0,0,0,0.4)',
 
   //modes
   success: '#4BB543',
