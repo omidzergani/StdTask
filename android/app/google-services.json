@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "664273619354",
+    "firebase_url": "https://ow-my-e9534.firebaseio.com",
+    "project_id": "ow-my-e9534",
+    "storage_bucket": "ow-my-e9534.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664273619354:android:18e30250734d6af228d223",
+        "android_client_info": {
+          "package_name": "com.stdtask"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "664273619354-kvb8jbvpuo6r18t07qhfci56rl7gprqu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh_PalhwBdy1oYI0Ua17ognPOlkcBYDHg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "664273619354-kvb8jbvpuo6r18t07qhfci56rl7gprqu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "664273619354-18viqr91ijg2r3gofi0cigplmusf52lj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.StdTask"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
