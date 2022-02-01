@@ -33,5 +33,6 @@ export default memo(HelperText, (prev, next) => {
     if (prev.weight !== next.weight) return false
     if (prev.mode !== next.mode) return false;
     if (prev.children !== next.children) return false;
+    if (prev.style !== next.style) return false;
     return true;
 })
