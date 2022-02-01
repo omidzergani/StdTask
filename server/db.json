@@ -1,37 +1,29 @@
 {
   "users": [
     {
-      "id": 1,
-      "first_name": "omid",
-      "last_name": "zergany",
       "email": "omidzergany@gmail.com",
-      "password": "zyomidzy"
+      "password": "zyomidzy",
+      "first_name": "Omid",
+      "last_name": "Zergany",
+      "id": "6"
     },
     {
-      "first_name": "omid",
-      "last_name": "zergany",
       "email": "alizergany@gmail.com",
       "password": "zyomidzy",
-      "id": 2
-    },
-    {
-      "data": {
-        "email": "omidzergany@gmail.com",
-        "password": "zyomidzy",
-        "firstName": "Mood",
-        "lastName": "Zergany"
-      },
-      "id": 3
+      "first_name": "Ali",
+      "last_name": "Zergany",
+      "id": "7"
     }
   ],
   "posts": [
     {
-      "id": 1,
-      "title": "TITLE 0",
-      "description": "Description of the post 0",
-      "user_id": 1,
+      "category": "Category 1",
+      "description": "Test 222",
+      "title": "Test",
+      "user_id": "7",
       "website": "",
-      "category": ""
+      "time": 1643690104856,
+      "id": 1
     }
   ]
 }
