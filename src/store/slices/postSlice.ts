@@ -1,17 +1,16 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {PURGE} from 'redux-persist/es/constants';
 import {Post} from '../../api/posts';
 import {RootStore} from '../index';
 
 interface PostState {
   posts: {[postId: Post['id']]: Post};
-  postsByUser: {[postId: Post['id']]: Post};
   error: boolean;
   message?: string;
 }
 
 const initialState: PostState = {
   posts: [],
-  postsByUser: [],
   error: false,
   message: undefined,
 };
@@ -39,15 +38,10 @@ const postSlice = createSlice({
           [action.payload.id]: action.payload,
           ...state.posts,
         },
-        postsByUser: {
-          [action.payload.id]: action.payload,
-          ...state.postsByUser,
-        },
       };
     },
     deletePost(state, action: PayloadAction<{postId: Post['id']}>) {
       delete state.posts[action.payload.postId];
-      delete state.postsByUser[action.payload.postId];
     },
     setUserPosts(state, action: PayloadAction<{posts: Post[]}>) {
       const posts = {};
@@ -57,7 +51,7 @@ const postSlice = createSlice({
 
       return {
         ...state,
-        postsByUser: posts,
+        profilePosts: posts,
       };
     },
     setPostError(
@@ -68,21 +62,19 @@ const postSlice = createSlice({
       state.message = action.payload.message;
     },
   },
+  extraReducers: builder => {
+    builder.addCase(PURGE, () => {
+      return initialState;
+    });
+  },
 });
 
 export const selectPost = (state: RootStore, postId: Post['id']) => {
   return state.posts.posts[postId];
 };
 
-export const selectUserPost = (state: RootStore, postId: Post['id']) => {
-  return state.posts.postsByUser[postId];
-};
-
 export const selectPostsArray = (state: RootStore): Post[] => {
   return Object.values(state.posts.posts);
-};
-export const selectUserPostsArray = (state: RootStore): Post[] => {
-  return Object.values(state.posts.postsByUser);
 };
 
 export const {setPosts, setUserPosts, setPostError, addPost} =

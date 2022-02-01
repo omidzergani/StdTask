@@ -12,7 +12,7 @@ import HelperText from '../../components/HelperText';
 import Button from '../../components/Button';
 import TextInput, { TextInputRef } from '../../components/TextInput';
 import { checkIsLoading } from '../../store/slices/uiSlice';
-import { loginAsyncAction, signUpAsyncAction } from '../../store/actions/userActions';
+import { loginAsyncAction, signUpAsyncAction } from '../../store/actions/authActions';
 import { UserSignUpData } from '../../api/user';
 import FormContainer from '../../components/FormContainer';
 
@@ -34,8 +34,8 @@ export default function SignUpScreen({ navigation }) {
 
     const { error, loading, message } = useAppSelector((state) => ({
         loading: checkIsLoading(state, loginAsyncAction.pending.type),
-        error: state.user.error,
-        message: state.user.message,
+        error: state.auth.error,
+        message: state.auth.message,
     }));
 
 

@@ -1,9 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {combineReducers} from '@reduxjs/toolkit';
 import persistReducer from 'redux-persist/es/persistReducer';
-import userReducer from '../slices/userSlice';
+import authReducer from '../slices/authSlice';
 import uiReducer from '../slices/uiSlice';
 import postReducer from '../slices/postSlice';
+import chatReducer from '../slices/chatSlice';
+import profileReducer from '../slices/profileSlice';
 
 const persistConfig = {
   key: 'root',
@@ -11,10 +13,12 @@ const persistConfig = {
   storage: AsyncStorage,
 };
 
-const persistedRootReducer = persistReducer(persistConfig, userReducer);
+const persistedRootReducer = persistReducer(persistConfig, authReducer);
 
 export default combineReducers({
-  user: persistedRootReducer,
+  auth: persistedRootReducer,
   ui: uiReducer,
   posts: postReducer,
+  chat: chatReducer,
+  profile: profileReducer,
 });

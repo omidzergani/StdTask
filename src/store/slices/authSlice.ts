@@ -17,7 +17,7 @@ const initialState: UserState = {
   message: undefined,
 };
 
-const userSlice = createSlice({
+const authSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
@@ -42,8 +42,8 @@ const userSlice = createSlice({
 });
 
 //selectors
-export const selectIsSignedIn = (state: RootStore) => state.user.isSignedIn;
-export const selectUser = (state: RootStore) => state.user.user;
+export const selectIsSignedIn = (state: RootStore) => state.auth.isSignedIn;
+export const selectUser = (state: RootStore) => state.auth.user;
 
-export const {setUser, setUserError} = userSlice.actions;
-export default userSlice.reducer;
+export const {setUser, setUserError} = authSlice.actions;
+export default authSlice.reducer;

@@ -1,4 +1,5 @@
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
+import { AppState } from 'react-native';
 import { useSelector } from 'react-redux';
 
 //navigators
@@ -17,7 +18,7 @@ import EditPost from './Post/EditPost';
 import PostDetail from './Post/PostDetail';
 
 //slices
-import { selectIsSignedIn } from '../store/slices/userSlice';
+import { selectIsSignedIn, selectUser } from '../store/slices/authSlice';
 
 //components
 import Header from '../components/Header';
@@ -27,6 +28,8 @@ import { scale, ScaledSheet } from 'react-native-size-matters';
 
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 import { Platform } from 'react-native';
+import ChatForm from './Chat/form';
+import { setUserOnline } from '../api/collections/collections';
 
 const ProfileStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,10 +47,12 @@ const Theme = {
 export default function RootScreens() {
     const ref = useRef<NavigationContainerRef<any>>();
     const isSignedIn = useSelector(selectIsSignedIn);
+
     // ref.current.
     return (
         <NavigationContainer theme={Theme} ref={ref}>
             <RootStack.Navigator
+
                 initialRouteName={isSignedIn ? 'Login' : 'Landing'}
                 screenOptions={{
                     ...defaultOptions,
@@ -55,13 +60,18 @@ export default function RootScreens() {
                 }}
                 key={'Root'}
             >
-                {!isSignedIn ?
-                    (<RootStack.Group>
-                        <RootStack.Screen name='Login' component={LoginScreen} options={{ title: 'LOGIN' }} />
-                        <RootStack.Screen name='SignUp' component={SignUpScreen} options={{ title: 'SIGN UP' }} />
-                    </RootStack.Group>)
-                    : undefined}
-                {!!isSignedIn && <RootStack.Screen name='Landing' component={LandingStackScreen} options={{ headerShown: false }} />}
+                {
+                    !isSignedIn ?
+                        (<RootStack.Group>
+                            <RootStack.Screen name='Login' component={LoginScreen} options={{ title: 'LOGIN' }} />
+                            <RootStack.Screen name='SignUp' component={SignUpScreen} options={{ title: 'SIGN UP' }} />
+                        </RootStack.Group>)
+                        : (<RootStack.Group>
+                            <RootStack.Screen name='Landing' component={LandingStackScreen} options={{ headerShown: false }} />
+                            <RootStack.Screen name='ChatForm' component={ChatForm} />
+                            <RootStack.Screen name='ChatProfile' component={ProfileScreen} options={{ title: 'User Profile' }} />
+                        </RootStack.Group>)
+                }
             </RootStack.Navigator>
         </NavigationContainer>
     );
@@ -69,6 +79,18 @@ export default function RootScreens() {
 
 
 function LandingStackScreen() {
+    const user = useSelector(selectUser);
+    useEffect(() => {
+        setUserOnline(user.id, true);
+        const subscriber = AppState.addEventListener('change', (state) => {
+            if (state = 'active') {
+                setUserOnline(user.id, true);
+            } else {
+                setUserOnline(user.id, false);
+            }
+        });
+        return () => subscriber.remove();
+    }, []);
 
     return (
         <Tab.Navigator

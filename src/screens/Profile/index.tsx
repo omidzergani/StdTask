@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 import React, { useCallback, useEffect, useLayoutEffect } from 'react';
 
 
@@ -6,14 +6,15 @@ import React, { useCallback, useEffect, useLayoutEffect } from 'react';
 import Button from '../../components/Button';
 import Container from '../../components/Container';
 import Label from '../../components/Label';
-import HelperText from '../../components/HelperText';
+
 import PostList from '../../components/PostComponents/PostList';
+import BackButton from '../../components/BackButton';
 
 //utils
 import { ScaledSheet } from 'react-native-size-matters';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Persistor } from '../../store';
-import { selectUser } from '../../store/slices/userSlice';
+import { selectUser } from '../../store/slices/authSlice';
 
 
 
@@ -22,50 +23,71 @@ import { USER_PLACEHOLDER } from '../../assets/images';
 import { Colors } from '../../theme';
 import { useIsFocused } from '@react-navigation/native';
 import { getPostAsyncAction } from '../../store/actions/postActions';
+import { setUserOnline } from '../../api/collections/collections';
+import { deleteUserProfile, selectUserProfile } from '../../store/slices/profileSlice';
+import { checkIfProfileIsLoading, getUserProfileAsyncAction } from '../../store/actions/profileActions';
 
-export default function ProfileScreen({ navigation }) {
+export default function ProfileScreen({ navigation, route }) {
+    const params = route.params;
+    const chatProfile = route.params?.fromChat;
     const dispatch = useAppDispatch();
-    const user = useAppSelector(selectUser);
-    const handleLogOut = useCallback(() => {
+    const user = useAppSelector(chatProfile ? selectUserProfile(params?.userId) : selectUser);
+    const userId = params?.userId ?? user.id;
+    const isLoading = useAppSelector(checkIfProfileIsLoading);
+
+
+    const handleLogOut = useCallback(async () => {
         Persistor.purge();
+        setUserOnline(user.id, false);
     }, []);
 
     const isScreenFocused = useIsFocused();
+
     useEffect(() => {
         if (isScreenFocused) {
-            dispatch(getPostAsyncAction(true));
+            dispatch(getUserProfileAsyncAction(userId));
+            dispatch(getPostAsyncAction(userId));
         }
     }, [isScreenFocused]);
 
+
     useLayoutEffect(() => {
-        navigation.setOptions({
-            headerRight: (
-                <Button
-                    weight='regular'
-                    radius='sharp'
-                    style={styles.logout}
-                    labelStyle={styles.logoutLabel}
-                    onPress={handleLogOut}>
-                    Log Out
-                </Button>
-            ),
-        })
+        if (!chatProfile) {
+            navigation.setOptions({
+                headerRight:
+                    (<Button
+                        weight='regular'
+                        radius='sharp'
+                        style={styles.logout}
+                        labelStyle={styles.logoutLabel}
+                        onPress={handleLogOut}>
+                        Log Out
+                    </Button>),
+            })
+        }
+
+        return () => {
+            //delete the user data by userId after the pushed profile unmounted;
+            dispatch(deleteUserProfile(userId));
+        }
     }, []);
 
+
+    if (isLoading) return <ActivityIndicator size={'large'} style={styles.loading} />
 
     return (
         <Container>
             <View style={styles.header}>
                 <Image source={USER_PLACEHOLDER} resizeMode='cover' style={styles.profile} />
                 <View>
-                    <Label weight='bold' style={styles.name}>{`${user.firstName} ${user.lastName}`}</Label>
-                    <Label style={styles.email}>{user.email}</Label>
+                    <Label weight='bold' style={styles.name}>{`${user?.firstName} ${user?.lastName}`}</Label>
+                    <Label style={styles.email}>{user?.email}</Label>
                 </View>
             </View>
             <Label weight='light' style={styles.title}>
-                My Posts
+                {params?.fromChat ? 'Posts' : 'My Posts'}
             </Label>
-            <PostList getUserPosts screenName='Profile' />
+            <PostList profileUserId={userId} screenName='Profile' />
         </Container>
     );
 }
@@ -100,5 +122,8 @@ const styles = ScaledSheet.create({
     },
     logoutLabel: {
         fontSize: '16@s',
+    },
+    loading: {
+        paddingTop: '100@s',
     }
 });

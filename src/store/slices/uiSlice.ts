@@ -1,7 +1,7 @@
 import {createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {isEqual} from 'lodash';
+import {PURGE} from 'redux-persist/es/constants';
 import {RootStore} from '../index';
-import userSlice from './userSlice';
 
 type Action = {name: string; params?: any};
 interface State {
@@ -53,6 +53,11 @@ const uiSlice = createSlice({
         refresh => refresh !== action.payload.refreshingAction,
       );
     },
+  },
+  extraReducers: builder => {
+    builder.addCase(PURGE, () => {
+      return initialState;
+    });
   },
 });
 

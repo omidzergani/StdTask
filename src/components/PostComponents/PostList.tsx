@@ -8,7 +8,7 @@ import PostItem from './PostItem';
 //store
 import { deletePostAsyncAction, getPostAsyncAction } from '../../store/actions/postActions';
 import { checkIsLoading, getUpdatingItemsId } from '../../store/slices/uiSlice';
-import { selectPostsArray, selectUserPostsArray } from '../../store/slices/postSlice';
+import { selectPostsArray } from '../../store/slices/postSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { Post } from '../../api/posts';
 
@@ -18,17 +18,19 @@ import { ScaledSheet } from 'react-native-size-matters';
 
 
 //selectors
-import { selectUser } from '../../store/slices/userSlice';
+import { selectUser } from '../../store/slices/authSlice';
+import EmptyListMessage from '../EmptyListMessage';
+import { selectProfilePostsArray } from '../../store/slices/profileSlice';
 
 interface Props {
-    getUserPosts?: boolean;
+    profileUserId?: string;
     screenName?: string;
 }
-export default function PostList({ getUserPosts, screenName }: Props) {
+export default function PostList({ profileUserId, screenName, }: Props) {
     const dispatch = useAppDispatch();
     const navigation = useNavigation<any>();
 
-    const posts = useAppSelector(getUserPosts ? selectUserPostsArray : selectPostsArray).sort((a, b) => b.time - a.time);
+    const posts = useAppSelector(profileUserId ? selectProfilePostsArray(profileUserId) : selectPostsArray).sort((a, b) => b.time - a.time);
 
 
     const isLoading = useAppSelector((state) => checkIsLoading(state, getPostAsyncAction.pending.type));
@@ -40,8 +42,8 @@ export default function PostList({ getUserPosts, screenName }: Props) {
     }, []);
 
     const handleGetPosts = useCallback(() => {
-        dispatch(getPostAsyncAction(getUserPosts));
-    }, [getUserPosts]);
+        dispatch(getPostAsyncAction(profileUserId));
+    }, [profileUserId]);
 
 
     const handleDetail = (postId: Post['id']) => {
@@ -62,7 +64,7 @@ export default function PostList({ getUserPosts, screenName }: Props) {
                 {
                     text: 'Yes',
                     onPress: () => {
-                        dispatch(deletePostAsyncAction({ postId, getUserPosts }));
+                        dispatch(deletePostAsyncAction({ postId, profileUserId }));
                     }
                 }
             ]);
@@ -97,6 +99,8 @@ export default function PostList({ getUserPosts, screenName }: Props) {
             maxToRenderPerBatch={5}
             style={styles.list}
             contentContainerStyle={styles.content}
+            ListEmptyComponent={<EmptyListMessage message='There is no post to show' icon='post' />}
+
         />
     );
 }

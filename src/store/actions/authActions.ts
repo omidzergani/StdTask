@@ -1,4 +1,5 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
+import {addUserToDB} from '../../api/collections/collections';
 import {
   sendLoginRequest,
   signUpRequest,
@@ -6,7 +7,7 @@ import {
   UserSignUpData,
 } from '../../api/user';
 import {startAction, stopAction} from '../slices/uiSlice';
-import {setUser, setUserError} from '../slices/userSlice';
+import {setUser, setUserError} from '../slices/authSlice';
 
 export const loginAsyncAction = createAsyncThunk<any, UserCredential>(
   'login',
@@ -20,7 +21,10 @@ export const loginAsyncAction = createAsyncThunk<any, UserCredential>(
       }
       ThunkApi.dispatch(
         setUser({
-          user: data,
+          user: {
+            id: String(data.id),
+            ...data,
+          },
           isSignedIn: true,
         }),
       );
@@ -44,12 +48,20 @@ export const signUpAsyncAction = createAsyncThunk<any, UserSignUpData>(
     try {
       ThunkApi.dispatch(startAction({name: ACTION_TYPE}));
       const data = await signUpRequest(body);
-      ThunkApi.dispatch(
-        setUser({
-          user: data,
-          isSignedIn: true,
-        }),
-      );
+
+      await addUserToDB({
+        email: data.email,
+        firstName: data.firstName,
+        id: String(data.id),
+        lastName: data.lastName,
+        online: data.online,
+      }),
+        ThunkApi.dispatch(
+          setUser({
+            user: data,
+            isSignedIn: true,
+          }),
+        );
     } catch (e) {
       ThunkApi.dispatch(
         setUserError({

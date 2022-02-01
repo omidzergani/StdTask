@@ -10,8 +10,8 @@ import BackButton from '../../components/BackButton';
 
 // redux
 import { useSelector } from 'react-redux';
-import { addPostAsyncAction, checkIfAddPostIsLoading, getPostAsyncAction } from '../../store/actions/postActions';
-import { selectUser } from '../../store/slices/userSlice';
+import { addPostAsyncAction, checkIfAddPostIsLoading } from '../../store/actions/postActions';
+import { selectUser } from '../../store/slices/authSlice';
 import { useAppDispatch } from '../../hooks';
 import { IMAGE_PLACEHOLDER } from '../../assets/images';
 import { DIMENSIONS } from '../../theme';

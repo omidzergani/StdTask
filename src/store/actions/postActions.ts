@@ -7,12 +7,7 @@ import {
   PostBody,
   updatePostRequest,
 } from '../../api/posts';
-import {
-  addPost,
-  setPostError,
-  setPosts,
-  setUserPosts,
-} from '../slices/postSlice';
+import {addPost, setPostError, setPosts} from '../slices/postSlice';
 import {
   checkIsLoading,
   getUpdatingItemsId,
@@ -20,21 +15,30 @@ import {
   stopAction,
 } from '../slices/uiSlice';
 import {RootStore} from '..';
+import {setProfilePosts} from '../slices/profileSlice';
 
-type GetUserPosts = boolean;
-
-export const getPostAsyncAction = createAsyncThunk<any, GetUserPosts>(
+export const getPostAsyncAction = createAsyncThunk<any, string | void>(
   'post',
-  async (getUserPosts, {dispatch, getState}) => {
+  async (userId, {dispatch}) => {
     const ACTION_TYPE = getPostAsyncAction.pending.type;
     try {
-      const state = getState() as RootStore;
       dispatch(startAction({name: ACTION_TYPE}));
-      const posts = await getPostsRequest({
-        userId: getUserPosts ? state.user.user.id : undefined,
+      const posts = (await getPostsRequest({
         order: 'desc',
-      });
-      dispatch(getUserPosts ? setUserPosts({posts}) : setPosts({posts}));
+        //@ts-ignore
+        userId,
+      })) as Post[];
+
+      if (userId) {
+        dispatch(
+          setProfilePosts({
+            posts: posts,
+            userId,
+          }),
+        );
+      } else {
+        dispatch(setPosts({posts}));
+      }
     } catch (e) {
       dispatch(
         setPostError({
@@ -52,8 +56,8 @@ export const checkIfGetPostIsLoading = (state: RootStore) =>
 
 export const deletePostAsyncAction = createAsyncThunk<
   any,
-  {postId: Post['id']; getUserPosts?: boolean}
->('post', async ({postId, getUserPosts}, {dispatch}) => {
+  {postId: Post['id']; profileUserId?: string}
+>('post', async ({postId, profileUserId}, {dispatch}) => {
   const ACTION = {
     name: deletePostAsyncAction.pending.type,
     params: {id: postId},
@@ -65,7 +69,7 @@ export const deletePostAsyncAction = createAsyncThunk<
       postId,
     });
 
-    dispatch(getPostAsyncAction(getUserPosts));
+    dispatch(getPostAsyncAction(profileUserId));
   } catch (e) {
     dispatch(
       setPostError({
@@ -82,14 +86,14 @@ export const selectDeletingPostsIds = (state: RootStore) =>
 
 export const addPostAsyncAction = createAsyncThunk<any, PostBody>(
   'post',
-  async (post, {dispatch, fulfillWithValue, rejectWithValue}) => {
+  async (post, {dispatch, fulfillWithValue}) => {
     const ACTION = {
       name: addPostAsyncAction.pending.type,
     };
     try {
       dispatch(startAction(ACTION));
       const {data} = await addPostRequest(post);
-      dispatch(getPostAsyncAction(false));
+      dispatch(getPostAsyncAction());
       fulfillWithValue(data);
     } catch (e) {
       dispatch(

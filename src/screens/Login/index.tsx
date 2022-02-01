@@ -16,7 +16,7 @@ import Button from '../../components/Button';
 import TextInput, { TextInputRef } from '../../components/TextInput';
 import { useSelector } from 'react-redux';
 import { checkIsLoading } from '../../store/slices/uiSlice';
-import { loginAsyncAction } from '../../store/actions/userActions';
+import { loginAsyncAction } from '../../store/actions/authActions';
 
 interface Props { }
 
@@ -31,8 +31,8 @@ export default function LoginScreen({ navigation }) {
     const dispatch = useAppDispatch();
     const { error, loading, message } = useAppSelector((state) => ({
         loading: checkIsLoading(state, loginAsyncAction.pending.type),
-        error: state.user.error,
-        message: state.user.message,
+        error: state.auth.error,
+        message: state.auth.message,
     }));
 
 
