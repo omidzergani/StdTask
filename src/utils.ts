@@ -1,5 +1,6 @@
 import camelCase from 'lodash/camelCase';
 import snakeCase from 'lodash/snakeCase';
+import moment from 'moment';
 
 export function camelCaseTheObjectKeys(obj: {[key: string]: any}) {
   if (typeof obj !== 'object') return obj;
@@ -23,4 +24,12 @@ export function snakeCaseTheObjectKeys(obj: {[key: string]: any}) {
   });
 
   return newData;
+}
+
+export function getTimeFromSeconds(seconds: number) {
+  return moment(seconds * 1000).format('HH:MM A');
+}
+
+export function getFromTimeString(seconds: number) {
+  return moment(seconds * 1000).from(moment.now());
 }
