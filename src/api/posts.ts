@@ -4,7 +4,7 @@ import {User} from './user';
 export interface PostBody {
   title: string;
   description: string;
-  userId: number;
+  userId: string;
   website?: string;
   category: string;
   time?: number;

@@ -1,10 +1,11 @@
 import {axios} from './config';
 
 export interface User {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
+  online?: boolean;
 }
 
 export interface UserCredential {
@@ -53,13 +54,18 @@ export async function signUpRequest({
   password,
 }: UserSignUpData): Promise<User | undefined> {
   const {data} = await axios.post<User>('/users', {
-    data: {
-      email,
-      password,
-      firstName,
-      lastName,
-    },
+    email,
+    password,
+    firstName,
+    lastName,
   });
 
   return data;
+}
+
+export async function getUserProfile(
+  userId: User['id'],
+): Promise<User | undefined> {
+  const {data} = await axios.get<User[]>(`/users/${userId}`);
+  return data as any;
 }
